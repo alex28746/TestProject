@@ -55,7 +55,7 @@ public class MyClient {
         } catch (IOException i) {
             System.out.println(i);
         }
-
+        System.out.println("aleksej = " + isConnected);
     }
 
     void ReadMessage() {

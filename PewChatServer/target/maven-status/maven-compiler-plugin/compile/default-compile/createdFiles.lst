@@ -1,3 +1,7 @@
-pewchatserver\PewChatServer.class
+pewchatserver\service\WatsonService.class
 pewchatserver\User.class
+pewchatserver\model\EmotionModel.class
+pewchatserver\configuration\WatsonConfiguration.class
+pewchatserver\PewChatServer.class
 pewchatserver\Server.class
+pewchatserver\service\WatsonServiceImpl.class
