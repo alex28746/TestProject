@@ -63,7 +63,6 @@ public class MyClient {
         readThread = new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.println("ReadMessage thread called.");
                 try {
                     while (true) {
                         System.out.println("ReadMessage while called.");

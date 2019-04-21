@@ -56,7 +56,7 @@ public class UserListener implements Runnable {
                     }
                     System.out.println(name + " is sending: " + message);
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
-                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(name + " : " + message + " | " + emotionModel.getDisplayName());
+                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(name + " : " + message + prepareEmotionModelForSending(emotionModel));
                     }
                 }
             } catch (IOException e) {
@@ -66,6 +66,10 @@ public class UserListener implements Runnable {
                 break;
             }
         }
+    }
+
+    private String prepareEmotionModelForSending(EmotionModel emotionModel) {
+        return "|[" + emotionModel.getDisplayName() + "]";
     }
 
     public void closeConnection() {

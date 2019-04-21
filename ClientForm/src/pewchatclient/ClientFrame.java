@@ -107,18 +107,10 @@ public class ClientFrame extends javax.swing.JFrame {
                 ConnectBtnActionPerformed(evt);
             }
         });
-
-//        ChatTextArea.setEditable(false);
-//        ChatTextArea.setColumns(20);
-//        ChatTextArea.setRows(5);
-//        ChatTextArea.setFont(textAreaFont);
         JTextPane pane = new JTextPane();
         pane.setContentType("text/html");
 
         pane.setText(convertMessageToHtml(EmotionType.JOY, "Joy emotion") + convertMessageToHtml(EmotionType.SADNESS, "Sadness emotion"));
-        //ImageIcon soundIcon = new ImageIcon("joy-final.jpg");
-
-        //pane.insertIcon(soundIcon);
         jScrollPane1.setViewportView(pane);
 
         SendBtn.setText("Send Message");
@@ -308,7 +300,6 @@ public class ClientFrame extends javax.swing.JFrame {
             public void run() {
                 System.out.println();
                 while (true) {
-                    System.out.println("Check ChatTextArea is running");
                     if (client.newMessage == true) {
                         ChatTextArea.setText(client.Messages.toString());
                         client.newMessage = false;
@@ -322,7 +313,6 @@ public class ClientFrame extends javax.swing.JFrame {
             @Override
             public void run() {
                 while (true) {
-                    System.out.println("Check USersStatusArea is running");
                     if (client.UserStatusChanged == true) {
                         //UsersStatusArea.setText("");
                         System.out.println("Size of HashMap in Thread2 " + OtherUserStatus.size());
