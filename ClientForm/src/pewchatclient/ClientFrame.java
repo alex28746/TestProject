@@ -5,6 +5,7 @@
  */
 package pewchatclient;
 
+import org.apache.commons.lang3.StringUtils;
 import pewchatclient.utils.EmotionType;
 
 import javax.swing.*;
@@ -25,6 +26,8 @@ public class ClientFrame extends javax.swing.JFrame {
 
     MyClient client;
     static String msgRecieved;
+
+    private String chatHistory = "";
 
     /**
      * Creates new form ClientFrame
@@ -78,6 +81,7 @@ public class ClientFrame extends javax.swing.JFrame {
         JoinBtn = new javax.swing.JButton();
         LeaveBtn = new javax.swing.JButton();
         CreateGroupBtn = new javax.swing.JButton();
+        ChatComponent = new JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("PewChat");
@@ -107,11 +111,10 @@ public class ClientFrame extends javax.swing.JFrame {
                 ConnectBtnActionPerformed(evt);
             }
         });
-        JTextPane pane = new JTextPane();
-        pane.setContentType("text/html");
+        ChatComponent.setContentType("text/html");
 
-        pane.setText(convertMessageToHtml(EmotionType.JOY, "Joy emotion") + convertMessageToHtml(EmotionType.SADNESS, "Sadness emotion"));
-        jScrollPane1.setViewportView(pane);
+        ChatComponent.setText(convertMessageToHtml("Message without any emotions in client."));
+        jScrollPane1.setViewportView(ChatComponent);
 
         SendBtn.setText("Send Message");
         SendBtn.addActionListener(new java.awt.event.ActionListener() {
@@ -260,26 +263,35 @@ public class ClientFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private String convertMessageToHtml(EmotionType emotionType, String message) {
-        String imgsrc = "";
-        try {
-            switch(emotionType) {
-                case JOY: {
-                    imgsrc = new File(JOY_IMG_PATH).toURL().toExternalForm();
-                    break;
+    private String convertMessageToHtml(String message) {
+        String emotion = StringUtils.substringBetween(message, "|(", ")");
+        if(emotion != null) {
+            String imgsrc = "";
+            try {
+                switch(emotion.toLowerCase()) {
+                    case "joy": {
+                        imgsrc = new File(JOY_IMG_PATH).toURL().toExternalForm();
+                        break;
+                    }
+                    case "sadness": {
+                        imgsrc = new File(SADNESS_IMG_PATH).toURL().toExternalForm();
+                        break;
+                    }
+                    default: {
+                        throw new IllegalArgumentException("Not correct type for emotion");
+                    }
                 }
-                case SADNESS: {
-                    imgsrc = new File(SADNESS_IMG_PATH).toURL().toExternalForm();
-                    break;
-                }
-                default: {
-                    throw new IllegalArgumentException("Not correct type for emotion");
-                }
+            } catch (MalformedURLException ex) {
+                System.out.println(ex);
             }
-        } catch (MalformedURLException ex) {
-            System.out.println(ex);
+            return "<img src='" + imgsrc + "' width='20' height='20'/>&nbsp;&nbsp;" + message + "<br/>";
+        } else {
+            return "<p>" + message + "</p><br/>";
         }
-        return "<img src='" + imgsrc + "' width='20' height='20'/>&nbsp;&nbsp;" + message + "<br/>";
+    }
+
+    public void addMessage(String message) {
+        chatHistory += "<p>" + message + "</p><br/>";
     }
 
     private void DisconnectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectBtnActionPerformed
@@ -307,7 +319,7 @@ public class ClientFrame extends javax.swing.JFrame {
                 System.out.println();
                 while (true) {
                     if (client.newMessage == true) {
-                        ChatTextArea.setText(client.Messages.toString());
+                        ChatComponent.setText(convertMessageToHtml(client.Messages.toString()));
                         client.newMessage = false;
                     }
                 }
@@ -424,5 +436,6 @@ public class ClientFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private JTextPane ChatComponent;
     // End of variables declaration//GEN-END:variables
 }
