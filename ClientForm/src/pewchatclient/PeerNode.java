@@ -35,7 +35,7 @@ public class PeerNode implements Runnable {
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
-
+            System.out.println("PeerNode2 exception " + ex);
         }
 
     }
@@ -51,7 +51,7 @@ public class PeerNode implements Runnable {
             input = new DataInputStream(socket.getInputStream());
             output = new DataOutputStream(socket.getOutputStream());
         } catch (IOException ex) {
-
+            System.out.println("Peer node exception " + ex);
         }
 
     }
@@ -65,7 +65,7 @@ public class PeerNode implements Runnable {
         try {
             output.writeUTF(message);
         } catch (IOException ex) {
-
+            System.out.println("Send message exception " + ex);
         }
 
     }
@@ -77,7 +77,7 @@ public class PeerNode implements Runnable {
             MessageHistory.append("\n" + this.UserName + ": " + message);
 
         } catch (IOException ex) {
-
+            System.out.println("Run exception " + ex);
         }
 
     }

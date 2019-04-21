@@ -11,10 +11,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-/**
- *
- * @author ToniGeorge
- */
 public class MyClient {
     // initialize socket and input output streams
 
@@ -51,9 +47,9 @@ public class MyClient {
             isConnected=true;
             
         } catch (UnknownHostException u) {
-            System.out.println(u);
+            System.out.println("MyClient host exception " + u);
         } catch (IOException i) {
-            System.out.println(i);
+            System.out.println("MyClient io exception " + i);
         }
         System.out.println("aleksej = " + isConnected);
     }
@@ -104,10 +100,10 @@ public class MyClient {
 
                     }
                 } catch (IOException e) {
-                    System.out.println("IO Exception");
+                    System.out.println("IO Exception while tried to read message " + e);
                     e.printStackTrace();
                 } catch (Exception ex) {
-                    System.out.println("Exception");
+                    System.out.println("Normal exception while tried to read message " + ex);
                     ex.printStackTrace();
                 }
                 System.out.println("HashMap in in the end of the thread in readMessage size "+OtherUserStatus.size());
@@ -122,6 +118,7 @@ public class MyClient {
             // write on the output stream
             out.writeUTF(message);
         } catch (IOException e) {
+            System.out.println("Io exception in sending message " + e);
             e.printStackTrace();
         }
 
@@ -133,7 +130,7 @@ public class MyClient {
             this.input.close();
             this.socket.close();
         } catch (IOException ex) {
-        
+            System.out.println("Error while trying to close connection " + ex);
         }
     }
 

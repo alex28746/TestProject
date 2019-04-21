@@ -66,6 +66,7 @@ public class UserListener implements Runnable {
                 break;
             }
         }
+        closeConnection();
     }
 
     private String prepareEmotionModelForSending(EmotionModel emotionModel) {
@@ -77,6 +78,7 @@ public class UserListener implements Runnable {
             // closing resources
             this.inputStream.close();
             this.outputStream.close();
+            this.scan.close();
         } catch (IOException e) {
             System.err.println("Error while trying to close streams " + e);
         }
