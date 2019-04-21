@@ -288,6 +288,12 @@ public class ClientFrame extends javax.swing.JFrame {
         ConnectBtn.setEnabled(true);
     }//GEN-LAST:event_DisconnectBtnActionPerformed
 
+    public void closeFrame() {
+        if(client != null) {
+            client.SendMessage("logout");
+        }
+    }
+
     private void ConnectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectBtnActionPerformed
         System.out.println("HashMap in the beginning of Connect size " + OtherUserStatus.size());
         client = new MyClient(AddressTextField.getText(), Integer.parseInt(PortNumTextField.getText()));
