@@ -5,25 +5,25 @@
  */
 package pewchatclient;
 
+import pewchatclient.utils.EmotionType;
+
 import javax.swing.*;
-import java.awt.*;
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import static pewchatclient.MyClient.OtherUserStatus;
 
 /**
- *
  * @author minarafla
  */
 public class ClientFrame extends javax.swing.JFrame {
-    
-    
-    MyClient client ;
+
+    private static final String JOY_IMG_PATH = "ClientForm/images/joy.jpg";
+    private static final String SADNESS_IMG_PATH = "ClientForm/images/sadness.jpg";
+
+    MyClient client;
     static String msgRecieved;
 
     /**
@@ -32,21 +32,18 @@ public class ClientFrame extends javax.swing.JFrame {
     public ClientFrame() {
         initComponents();
     }
-    public String getEncodedStatus(){
-        if(StatusComboBox.getSelectedItem()=="Online"){
+
+    public String getEncodedStatus() {
+        if (StatusComboBox.getSelectedItem() == "Online") {
             return "###1";
-        }
-        else if(StatusComboBox.getSelectedItem()=="Busy"){
+        } else if (StatusComboBox.getSelectedItem() == "Busy") {
             return "###2";
-        }
-        else if(StatusComboBox.getSelectedItem()=="Away"){
+        } else if (StatusComboBox.getSelectedItem() == "Away") {
             return "###3";
-        }
-        else if(StatusComboBox.getSelectedItem()=="Offline"){
+        } else if (StatusComboBox.getSelectedItem() == "Offline") {
             return "###4";
-        }
-        else return "Error";
-   }
+        } else return "Error";
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -118,15 +115,7 @@ public class ClientFrame extends javax.swing.JFrame {
         JTextPane pane = new JTextPane();
         pane.setContentType("text/html");
 
-        String imgsrc="";
-        try {
-            imgsrc = new File("sadness-final.jpg").toURL().toExternalForm();
-        } catch (MalformedURLException ex) {
-            System.out.println(ex);
-        }
-
-        String html = "<img src='" + imgsrc + "' width='20' height='20'/>&nbsp;&nbsp;Hello, I am mr Karelin Hello, I am mr Karelin Hello, I am mr Karelin, Hello, I am mr Karelin<br/>";
-        pane.setText(html+html+html+html+html+html+html+html+html+html+html+html+html+html+html+html+html+html+html+html);
+        pane.setText(convertMessageToHtml(EmotionType.JOY, "Joy emotion") + convertMessageToHtml(EmotionType.SADNESS, "Sadness emotion"));
         //ImageIcon soundIcon = new ImageIcon("joy-final.jpg");
 
         //pane.insertIcon(soundIcon);
@@ -151,7 +140,7 @@ public class ClientFrame extends javax.swing.JFrame {
 
         StatusLabel.setText("status");
 
-        StatusComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Online", "Busy", "Away", "Offline" }));
+        StatusComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[]{"Online", "Busy", "Away", "Offline"}));
         StatusComboBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 StatusComboBoxActionPerformed(evt);
@@ -159,9 +148,15 @@ public class ClientFrame extends javax.swing.JFrame {
         });
 
         GroupsjList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
+            String[] strings = {"Item 1", "Item 2", "Item 3", "Item 4", "Item 5"};
+
+            public int getSize() {
+                return strings.length;
+            }
+
+            public String getElementAt(int i) {
+                return strings[i];
+            }
         });
         jScrollPane4.setViewportView(GroupsjList);
 
@@ -176,102 +171,124 @@ public class ClientFrame extends javax.swing.JFrame {
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(69, 69, 69)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(UsernameLabel)
-                                .addGap(18, 18, 18)
-                                .addComponent(UsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(AddressLabel)
-                                .addGap(18, 18, 18)
-                                .addComponent(AddressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(PortNumberLabel))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(ConnectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(72, 72, 72)
-                                .addComponent(DisconnectBtn)))
-                        .addGap(18, 18, 18)
-                        .addComponent(PortNumTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
-                        .addComponent(SendBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jScrollPane2)))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addComponent(StatusLabel)
-                        .addGap(18, 18, 18)
-                        .addComponent(StatusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap(174, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(39, 39, 39)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(GroupsLabel)
-                                .addGap(18, 18, 18)
-                                .addComponent(CreateGroupBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(UserStatusLabel)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-                                    .addComponent(JoinBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(LeaveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)))
-                        .addGap(0, 51, Short.MAX_VALUE))))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(69, 69, 69)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(UsernameLabel)
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(UsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(AddressLabel)
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(AddressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(PortNumberLabel))
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(ConnectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addGap(72, 72, 72)
+                                                                .addComponent(DisconnectBtn)))
+                                                .addGap(18, 18, 18)
+                                                .addComponent(PortNumTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 453, Short.MAX_VALUE)
+                                                .addComponent(SendBtn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jScrollPane2)))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(18, 18, 18)
+                                                .addComponent(StatusLabel)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(StatusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addContainerGap(174, Short.MAX_VALUE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(39, 39, 39)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(layout.createSequentialGroup()
+                                                                .addComponent(GroupsLabel)
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(CreateGroupBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addComponent(UserStatusLabel)
+                                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
+                                                                        .addComponent(JoinBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                        .addComponent(LeaveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING)
+                                                                .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)))
+                                                .addGap(0, 51, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(AddressLabel)
-                    .addComponent(AddressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(UsernameLabel)
-                    .addComponent(UsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(PortNumberLabel)
-                    .addComponent(PortNumTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(StatusLabel)
-                    .addComponent(StatusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(33, 33, 33)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(DisconnectBtn)
-                            .addComponent(ConnectBtn)))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(UserStatusLabel)))
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(30, 30, 30)
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(GroupsLabel)
-                            .addComponent(CreateGroupBtn))
-                        .addGap(18, 18, 18)
-                        .addComponent(jScrollPane4)))
-                .addGap(29, 29, 29)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(SendBtn)
-                    .addComponent(JoinBtn)
-                    .addComponent(LeaveBtn))
-                .addContainerGap(42, Short.MAX_VALUE))
+                layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(layout.createSequentialGroup()
+                                .addGap(24, 24, 24)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(AddressLabel)
+                                        .addComponent(AddressTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(UsernameLabel)
+                                        .addComponent(UsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(PortNumberLabel)
+                                        .addComponent(PortNumTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(StatusLabel)
+                                        .addComponent(StatusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addGap(33, 33, 33)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(DisconnectBtn)
+                                                        .addComponent(ConnectBtn)))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(UserStatusLabel)))
+                                .addGap(18, 18, 18)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(30, 30, 30)
+                                                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                                        .addComponent(GroupsLabel)
+                                                        .addComponent(CreateGroupBtn))
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jScrollPane4)))
+                                .addGap(29, 29, 29)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(SendBtn)
+                                        .addComponent(JoinBtn)
+                                        .addComponent(LeaveBtn))
+                                .addContainerGap(42, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private String convertMessageToHtml(EmotionType emotionType, String message) {
+        String imgsrc = "";
+        try {
+            switch(emotionType) {
+                case JOY: {
+                    imgsrc = new File(JOY_IMG_PATH).toURL().toExternalForm();
+                    break;
+                }
+                case SADNESS: {
+                    imgsrc = new File(SADNESS_IMG_PATH).toURL().toExternalForm();
+                    break;
+                }
+                default: {
+                    throw new IllegalArgumentException("Not correct type for emotion");
+                }
+            }
+        } catch (MalformedURLException ex) {
+            System.out.println(ex);
+        }
+        return "<img src='" + imgsrc + "' width='20' height='20'/>&nbsp;&nbsp;" + message + "<br/>";
+    }
 
     private void DisconnectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectBtnActionPerformed
         client.closeConnection();
@@ -280,8 +297,8 @@ public class ClientFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_DisconnectBtnActionPerformed
 
     private void ConnectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectBtnActionPerformed
-        System.out.println("HashMap in the beginning of Connect size "+OtherUserStatus.size());
-        client = new MyClient(AddressTextField.getText(),Integer.parseInt(PortNumTextField.getText()));
+        System.out.println("HashMap in the beginning of Connect size " + OtherUserStatus.size());
+        client = new MyClient(AddressTextField.getText(), Integer.parseInt(PortNumTextField.getText()));
         DisconnectBtn.setEnabled(true);
         ConnectBtn.setEnabled(false);
         client.ReadMessage();
@@ -290,17 +307,17 @@ public class ClientFrame extends javax.swing.JFrame {
             @Override
             public void run() {
                 System.out.println();
-                while(true){
+                while (true) {
                     System.out.println("Check ChatTextArea is running");
-                    if(client.newMessage == true){
+                    if (client.newMessage == true) {
                         ChatTextArea.setText(client.Messages.toString());
                         client.newMessage = false;
-                    }  
+                    }
                 }
             }
         });
         t.start();
-        System.out.println("HashMap in the end of Thread 1 size "+OtherUserStatus.size());
+        System.out.println("HashMap in the end of Thread 1 size " + OtherUserStatus.size());
         Thread t2 = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -308,40 +325,40 @@ public class ClientFrame extends javax.swing.JFrame {
                     System.out.println("Check USersStatusArea is running");
                     if (client.UserStatusChanged == true) {
                         //UsersStatusArea.setText("");
-                        System.out.println("Size of HashMap in Thread2 "+OtherUserStatus.size());
+                        System.out.println("Size of HashMap in Thread2 " + OtherUserStatus.size());
                         Iterator it = MyClient.OtherUserStatus.entrySet().iterator();
-                        if(MyClient.OtherUserStatus.size()>1){
-                            System.out.println("Size of HashMap is "+MyClient.OtherUserStatus.size());
-                            
+                        if (MyClient.OtherUserStatus.size() > 1) {
+                            System.out.println("Size of HashMap is " + MyClient.OtherUserStatus.size());
+
                         }
-                            
+
                         while (it.hasNext()) {
                             Map.Entry pair = (Map.Entry) it.next();
-                            System.out.println("Value"+pair.getValue());
-                            UsersStatusArea.append(pair.getKey() + " is " + pair.getValue()+"\n");
+                            System.out.println("Value" + pair.getValue());
+                            UsersStatusArea.append(pair.getKey() + " is " + pair.getValue() + "\n");
                             it.remove(); // avoids a ConcurrentModificationException
                         }
-                        client.UserStatusChanged=false;
+                        client.UserStatusChanged = false;
                     }
                 }
             }
         });
         t2.start();
-        System.out.println("Size of HashMap  after thread 2 is "+MyClient.OtherUserStatus.size());
+        System.out.println("Size of HashMap  after thread 2 is " + MyClient.OtherUserStatus.size());
     }//GEN-LAST:event_ConnectBtnActionPerformed
 
     private void SendBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendBtnActionPerformed
         client.SendMessage(MsgTextArea.getText());
         //ChatTextArea.append("\n"+MsgTextArea.getText());
         MsgTextArea.setText("");//to clear the chat text area after sending
-        
+
     }//GEN-LAST:event_SendBtnActionPerformed
 
     private void StatusComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_StatusComboBoxActionPerformed
         try {
             if (client.isConnected == true) {
                 client.status = (String) StatusComboBox.getSelectedItem();
-                client.UserStatusChanged=true;
+                client.UserStatusChanged = true;
                 client.SendMessage(getEncodedStatus());
             } else {
 
@@ -358,7 +375,7 @@ public class ClientFrame extends javax.swing.JFrame {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
+         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html
          */
         try {
             for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
