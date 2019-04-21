@@ -5,7 +5,11 @@
  */
 package pewchatclient;
 
+import javax.swing.*;
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Level;
@@ -107,10 +111,26 @@ public class ClientFrame extends javax.swing.JFrame {
             }
         });
 
-        ChatTextArea.setEditable(false);
-        ChatTextArea.setColumns(20);
-        ChatTextArea.setRows(5);
-        jScrollPane1.setViewportView(ChatTextArea);
+//        ChatTextArea.setEditable(false);
+//        ChatTextArea.setColumns(20);
+//        ChatTextArea.setRows(5);
+//        ChatTextArea.setFont(textAreaFont);
+        JTextPane pane = new JTextPane();
+        pane.setContentType("text/html");
+
+        String imgsrc="";
+        try {
+            imgsrc = new File("sadness-final.jpg").toURL().toExternalForm();
+        } catch (MalformedURLException ex) {
+            System.out.println(ex);
+        }
+
+        String html = "<img src='" + imgsrc + "' width='20' height='20'/>&nbsp;&nbsp;Hello, I am mr Karelin Hello, I am mr Karelin Hello, I am mr Karelin, Hello, I am mr Karelin<br/>";
+        pane.setText(html+html+html+html+html+html+html+html+html+html+html+html+html+html+html+html+html+html+html+html);
+        //ImageIcon soundIcon = new ImageIcon("joy-final.jpg");
+
+        //pane.insertIcon(soundIcon);
+        jScrollPane1.setViewportView(pane);
 
         SendBtn.setText("Send Message");
         SendBtn.addActionListener(new java.awt.event.ActionListener() {
