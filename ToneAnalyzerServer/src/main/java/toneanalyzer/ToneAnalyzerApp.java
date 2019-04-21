@@ -1,17 +1,17 @@
-package pewchatserver;
+package toneanalyzer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import pewchatserver.service.WatsonService;
+import toneanalyzer.service.WatsonService;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 
 @SpringBootApplication
-public class PewChatServer {
+public class ToneAnalyzerApp {
 
-    static ArrayList<User> users = new ArrayList<User>();
+    static ArrayList<UserListener> users = new ArrayList<UserListener>();
 
     @Autowired
     public Server server;
@@ -20,12 +20,11 @@ public class PewChatServer {
     public WatsonService watsonServiceImpl;
 
     public static void main(String[] args) {
-        SpringApplication.run(PewChatServer.class, args);
+        SpringApplication.run(ToneAnalyzerApp.class, args);
     }
 
     @PostConstruct
     public void init() {
-        watsonServiceImpl.getEmotion("sadness");
         Thread t = new Thread(server);
         server.run();
     }

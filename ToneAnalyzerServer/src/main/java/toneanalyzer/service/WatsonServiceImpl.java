@@ -1,11 +1,11 @@
-package pewchatserver.service;
+package toneanalyzer.service;
 
 import com.google.gson.*;
 import com.ibm.watson.tone_analyzer.v3.ToneAnalyzer;
 import com.ibm.watson.tone_analyzer.v3.model.ToneOptions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pewchatserver.model.EmotionModel;
+import toneanalyzer.model.EmotionModel;
 
 @Service
 public class WatsonServiceImpl implements WatsonService {

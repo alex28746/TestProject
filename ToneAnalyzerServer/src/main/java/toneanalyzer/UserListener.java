@@ -1,9 +1,7 @@
-package pewchatserver;
+package toneanalyzer;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import pewchatserver.model.EmotionModel;
-import pewchatserver.service.WatsonService;
-import pewchatserver.service.WatsonServiceImpl;
+import toneanalyzer.model.EmotionModel;
+import toneanalyzer.service.WatsonService;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,7 +9,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class User implements Runnable {
+public class UserListener implements Runnable {
 
     Scanner scan = new Scanner(System.in);
     String name;
@@ -21,7 +19,7 @@ public class User implements Runnable {
     WatsonService watsonService;
     boolean isOnline;
 
-    public User(Socket socket, String username, DataInputStream inputStream, DataOutputStream outputStream, WatsonService watsonService) {
+    public UserListener(Socket socket, String username, DataInputStream inputStream, DataOutputStream outputStream, WatsonService watsonService) {
         this.name = username;
         this.socket = socket;
         this.inputStream = inputStream;
@@ -52,14 +50,13 @@ public class User implements Runnable {
                 EmotionModel emotionModel = new EmotionModel();
 
                 if (message.length() > 0) {
-                    System.out.println("mesage = " + message);
                     emotionModel = watsonService.getEmotion(message);
                 }
 
                 System.out.println(name + " is sending: " + message);
 
-                for (int i = 0; i < PewChatServer.users.size(); i++) {
-                    PewChatServer.users.get(i).outputStream.writeUTF(name + " : " + emotionModel.getDisplayName());
+                for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
+                    ToneAnalyzerApp.users.get(i).outputStream.writeUTF(name + " : " + emotionModel.getDisplayName());
                 }
             } catch (IOException e) {
                 System.err.println(e);

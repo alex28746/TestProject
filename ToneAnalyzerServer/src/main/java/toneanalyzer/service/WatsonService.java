@@ -1,6 +1,6 @@
-package pewchatserver.service;
+package toneanalyzer.service;
 
-import pewchatserver.model.EmotionModel;
+import toneanalyzer.model.EmotionModel;
 
 public interface WatsonService {
     EmotionModel getEmotion(String message);

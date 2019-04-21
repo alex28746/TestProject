@@ -1,9 +1,8 @@
-package pewchatserver;
+package toneanalyzer;
 
-import com.ibm.watson.tone_analyzer.v3.model.ToneAnalysis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pewchatserver.service.WatsonServiceImpl;
+import toneanalyzer.service.WatsonServiceImpl;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -18,7 +17,7 @@ public class Server implements Runnable {
     private ServerSocket serverSocket;
     private Socket socket;
     private int i = 1;
-//    private ArrayList<User> users = new ArrayList<User>();
+//    private ArrayList<UserListener> users = new ArrayList<UserListener>();
 
     private final int PORT = 9999;
 
@@ -46,7 +45,7 @@ public class Server implements Runnable {
                 System.out.println("Creating a new user handler for this client...");
 
                 // Create a new handler object for handling this request.
-                User newUser = new User(socket, "Client" + i, inputStream, outputStream, watsonService);
+                UserListener newUser = new UserListener(socket, "Client" + i, inputStream, outputStream, watsonService);
 
                 // Create a new Thread with this object.
                 Thread t = new Thread(newUser);
@@ -54,7 +53,7 @@ public class Server implements Runnable {
                 System.out.println("Adding this client to active client list");
 
                 // add this client to active clients list
-                PewChatServer.users.add(newUser);
+                ToneAnalyzerApp.users.add(newUser);
 
                 // start the thread.
                 t.start();
@@ -63,8 +62,8 @@ public class Server implements Runnable {
                 // i is used for naming only, and can be replaced
                 // by any naming scheme
                 i++;
-                for (int i = 0; i < PewChatServer.users.size(); i++) {
-                    System.out.println(PewChatServer.users.get(i).name + " is connected");
+                for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
+                    System.out.println(ToneAnalyzerApp.users.get(i).name + " is connected");
                 }
             } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);

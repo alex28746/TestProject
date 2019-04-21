@@ -1,4 +1,4 @@
-package pewchatserver.model;
+package toneanalyzer.model;
 
 import com.google.gson.annotations.SerializedName;
 
