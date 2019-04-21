@@ -312,7 +312,7 @@ public class ClientFrame extends javax.swing.JFrame {
 
     private void SendBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendBtnActionPerformed
         client.SendMessage(MsgTextArea.getText());
-        ChatTextArea.append("\n"+MsgTextArea.getText());
+        //ChatTextArea.append("\n"+MsgTextArea.getText());
         MsgTextArea.setText("");//to clear the chat text area after sending
         
     }//GEN-LAST:event_SendBtnActionPerformed
