@@ -27,7 +27,6 @@ public class ClientFrame extends javax.swing.JFrame {
      */
     public ClientFrame() {
         initComponents();
-        
     }
     public String getEncodedStatus(){
         if(StatusComboBox.getSelectedItem()=="Online"){
@@ -266,7 +265,7 @@ public class ClientFrame extends javax.swing.JFrame {
         DisconnectBtn.setEnabled(true);
         ConnectBtn.setEnabled(false);
         client.ReadMessage();
-        client.SendMessage(getEncodedStatus());
+        client.SendMessage("#####" + UsernameTextField.getText());
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
