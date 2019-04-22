@@ -113,7 +113,6 @@ public class ClientFrame extends javax.swing.JFrame {
         });
         ChatComponent.setContentType("text/html");
 
-        ChatComponent.setText(convertMessageToHtml("Message without any emotions in client."));
         jScrollPane1.setViewportView(ChatComponent);
 
         SendBtn.setText("Send Message");
@@ -263,9 +262,9 @@ public class ClientFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private String convertMessageToHtml(String message) {
-        String emotion = StringUtils.substringBetween(message, "|(", ")");
-        if(emotion != null) {
+    public String convertMessageToHtml(String message) {
+        String emotion = StringUtils.substringBetween(message, "|[", "]");
+        if(emotion != null && emotion.length() > 0 && !"null".equals(emotion)) {
             String imgsrc = "";
             try {
                 switch(emotion.toLowerCase()) {
@@ -278,20 +277,21 @@ public class ClientFrame extends javax.swing.JFrame {
                         break;
                     }
                     default: {
-                        throw new IllegalArgumentException("Not correct type for emotion");
+                        throw new IllegalArgumentException("Not correct type for emotion in converting " + emotion);
                     }
                 }
             } catch (MalformedURLException ex) {
                 System.out.println(ex);
             }
-            return "<img src='" + imgsrc + "' width='20' height='20'/>&nbsp;&nbsp;" + message + "<br/>";
+            String convertedMessage = message.replace("|["+emotion+"]", "");
+            return "<img src='" + imgsrc + "' width='20' height='20'/>&nbsp;&nbsp;" + convertedMessage + "<br>";
         } else {
             return "<p>" + message + "</p><br/>";
         }
     }
 
     public void addMessage(String message) {
-        chatHistory += "<p>" + message + "</p><br/>";
+        chatHistory += "<p>" + message + "</p><br>";
     }
 
     private void DisconnectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisconnectBtnActionPerformed
@@ -316,10 +316,11 @@ public class ClientFrame extends javax.swing.JFrame {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
-                System.out.println();
                 while (true) {
+                    System.out.println("RUNNED2");
                     if (client.newMessage == true) {
-                        ChatComponent.setText(convertMessageToHtml(client.Messages.toString()));
+                        chatHistory = convertMessageToHtml(client.Messages.toString());
+                        ChatComponent.setText(chatHistory);
                         client.newMessage = false;
                     }
                 }
@@ -327,31 +328,6 @@ public class ClientFrame extends javax.swing.JFrame {
         });
         t.start();
         System.out.println("HashMap in the end of Thread 1 size " + OtherUserStatus.size());
-        Thread t2 = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    if (client.UserStatusChanged == true) {
-                        //UsersStatusArea.setText("");
-                        System.out.println("Size of HashMap in Thread2 " + OtherUserStatus.size());
-                        Iterator it = MyClient.OtherUserStatus.entrySet().iterator();
-                        if (MyClient.OtherUserStatus.size() > 1) {
-                            System.out.println("Size of HashMap is " + MyClient.OtherUserStatus.size());
-
-                        }
-
-                        while (it.hasNext()) {
-                            Map.Entry pair = (Map.Entry) it.next();
-                            System.out.println("Value" + pair.getValue());
-                            UsersStatusArea.append(pair.getKey() + " is " + pair.getValue() + "\n");
-                            it.remove(); // avoids a ConcurrentModificationException
-                        }
-                        client.UserStatusChanged = false;
-                    }
-                }
-            }
-        });
-        t2.start();
         System.out.println("Size of HashMap  after thread 2 is " + MyClient.OtherUserStatus.size());
     }//GEN-LAST:event_ConnectBtnActionPerformed
 

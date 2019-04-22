@@ -42,9 +42,9 @@ public class UserListener implements Runnable {
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(this.name + " disconnected!");
                     }
                     this.isOnline = false;
-                    this.socket.close();
+                    closeConnection();
                     break;
-                } else if(message.contains("#####")) {
+                } else if (message.contains("#####")) {
                     this.name = message.replace("#####", "");
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(this.name + " connected to chat!");
@@ -76,6 +76,7 @@ public class UserListener implements Runnable {
     public void closeConnection() {
         try {
             // closing resources
+            this.scan.close();
             this.inputStream.close();
             this.outputStream.close();
             this.scan.close();

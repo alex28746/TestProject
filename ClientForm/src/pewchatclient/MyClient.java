@@ -5,11 +5,14 @@
  */
 package pewchatclient;
 
-import java.net.*;
-import java.io.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Scanner;
 
 public class MyClient {
     // initialize socket and input output streams
@@ -61,43 +64,16 @@ public class MyClient {
             public void run() {
                 try {
                     while (true) {
+                        System.out.println("RUNNED1");
                         System.out.println("ReadMessage while called.");
 
                         // read the message sent to this client
                         String msg = input.readUTF();
 
-                        if (msg.contains("###")) {
-                            //esm el client hayb2a men awel el msg le 7ad abl el "#"
-                            String clientName = msg.substring(0, msg.indexOf("#")-3);
-                            String clientStatus = msg.substring(msg.length()-1);
-                            String s="";
-                            
-                            if (clientStatus.contains("1")) {
-                                s = "Online";
-                            } else if (clientStatus.contains("2")) {
-                                s = "Busy";
-                            } else if (clientStatus.contains("3")) {
-                                s = "Away";
-                            } else if (clientStatus.contains("4")) {
-                                s = "Offline";
-                            }
-                            else {
-                                s ="ERRRORRRRR!!";
-                            }
-                            System.out.println("CLIENT NAME IS "+clientName);
-                            OtherUserStatus.put(clientName, s);
-                            System.out.println("HashMap in ReadMessage size "+OtherUserStatus.size());
-                            
-                            System.out.println("UserStatusChanged = TRUE");
-                            UserStatusChanged = true;
-                                
-                        } else {
-                            System.out.println("Message received: " + msg);
-                            Messages.append("\n").append(msg);
-                            newMessage = true;
-                            System.out.println("Messages STRING: " + Messages);
-                        }
-
+                        System.out.println("Message received: " + msg);
+                        Messages.append("<br>").append(msg);
+                        newMessage = true;
+                        System.out.println("Messages STRING: " + Messages);
                     }
                 } catch (IOException e) {
                     System.out.println("IO Exception while tried to read message " + e);
@@ -126,9 +102,11 @@ public class MyClient {
     
     void closeConnection(){
         try {
-            this.out.close();
-            this.input.close();
-            this.socket.close();
+            out.close();
+            input.close();
+            socket.close();
+            readThread.stop();
+            scn.close();
         } catch (IOException ex) {
             System.out.println("Error while trying to close connection " + ex);
         }
