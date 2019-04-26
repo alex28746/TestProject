@@ -35,9 +35,9 @@ public class UserListener implements Runnable {
             try {
                 // receive the string
                 message = inputStream.readUTF();
-
                 System.out.println(message);
                 if (message.equals("logout")) {
+                    System.out.println(name + " disconnected!");
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(this.name + " disconnected!");
                     }
@@ -46,6 +46,7 @@ public class UserListener implements Runnable {
                     break;
                 } else if (message.contains("#####")) {
                     this.name = message.replace("#####", "");
+                    System.out.println(name + " connected to chat!");
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(this.name + " connected to chat!");
                     }
@@ -56,6 +57,7 @@ public class UserListener implements Runnable {
                     }
                     System.out.println(name + " is sending: " + message);
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
+                        System.out.println("Sended to another person model");
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(name + " : " + message + prepareEmotionModelForSending(emotionModel));
                     }
                 }

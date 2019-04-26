@@ -66,7 +66,6 @@ public class ClientFrame extends javax.swing.JFrame {
         DisconnectBtn = new javax.swing.JButton();
         ConnectBtn = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        ChatTextArea = new javax.swing.JTextArea();
         SendBtn = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         MsgTextArea = new javax.swing.JTextArea();
@@ -84,7 +83,7 @@ public class ClientFrame extends javax.swing.JFrame {
         ChatComponent = new JTextPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("PewChat");
+        setTitle("Praca inz [DEV]");
         setResizable(false);
 
         PortNumberLabel.setText("Port #");
@@ -142,7 +141,7 @@ public class ClientFrame extends javax.swing.JFrame {
         });
 
         GroupsjList.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = {"Item 1", "Item 2", "Item 3", "Item 4", "Item 5"};
+            String[] strings = {"DEV", "User emotion 1", "User emotion 2", "User emotion 3", "User emotion 4"};
 
             public int getSize() {
                 return strings.length;
@@ -154,13 +153,13 @@ public class ClientFrame extends javax.swing.JFrame {
         });
         jScrollPane4.setViewportView(GroupsjList);
 
-        GroupsLabel.setText("Groups");
+        GroupsLabel.setText("Emotions");
 
-        JoinBtn.setText("Join");
+        JoinBtn.setText("1 [DEV]");
 
-        LeaveBtn.setText("Leave");
+        LeaveBtn.setText("2 [DEV]");
 
-        CreateGroupBtn.setText("Create Group");
+        CreateGroupBtn.setText("Dev button");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -308,32 +307,17 @@ public class ClientFrame extends javax.swing.JFrame {
 
     private void ConnectBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ConnectBtnActionPerformed
         System.out.println("HashMap in the beginning of Connect size " + OtherUserStatus.size());
-        client = new MyClient(AddressTextField.getText(), Integer.parseInt(PortNumTextField.getText()));
+        client = new MyClient(AddressTextField.getText(), Integer.parseInt(PortNumTextField.getText()), this);
         DisconnectBtn.setEnabled(true);
         ConnectBtn.setEnabled(false);
-        client.ReadMessage();
         client.SendMessage("#####" + UsernameTextField.getText());
-        Thread t = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (true) {
-                    System.out.println("RUNNED2");
-                    if (client.newMessage == true) {
-                        chatHistory = convertMessageToHtml(client.Messages.toString());
-                        ChatComponent.setText(chatHistory);
-                        client.newMessage = false;
-                    }
-                }
-            }
-        });
-        t.start();
+        client.ReadMessage();
         System.out.println("HashMap in the end of Thread 1 size " + OtherUserStatus.size());
         System.out.println("Size of HashMap  after thread 2 is " + MyClient.OtherUserStatus.size());
     }//GEN-LAST:event_ConnectBtnActionPerformed
 
     private void SendBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SendBtnActionPerformed
         client.SendMessage(MsgTextArea.getText());
-        //ChatTextArea.append("\n"+MsgTextArea.getText());
         MsgTextArea.setText("");//to clear the chat text area after sending
 
     }//GEN-LAST:event_SendBtnActionPerformed
@@ -390,7 +374,6 @@ public class ClientFrame extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel AddressLabel;
     private javax.swing.JTextField AddressTextField;
-    private javax.swing.JTextArea ChatTextArea;
     private javax.swing.JButton ConnectBtn;
     private javax.swing.JButton CreateGroupBtn;
     private javax.swing.JButton DisconnectBtn;
@@ -412,6 +395,6 @@ public class ClientFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    private JTextPane ChatComponent;
+    public JTextPane ChatComponent;
     // End of variables declaration//GEN-END:variables
 }

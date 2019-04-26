@@ -10,9 +10,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class MyClient {
     // initialize socket and input output streams
@@ -22,12 +20,14 @@ public class MyClient {
     private DataOutputStream out = null;
     Scanner scn = new Scanner(System.in);
     Thread readThread;
-    StringBuffer Messages = new StringBuffer();
+    List<String> Messages = new ArrayList<>();
     boolean newMessage = false;
     String status="";
     Boolean isConnected=false;
     static Map<String,String> OtherUserStatus = new HashMap<String,String>();
     boolean UserStatusChanged=false;
+
+    ClientFrame parent;
 
     public DataInputStream getInput() {
         return input;
@@ -37,7 +37,7 @@ public class MyClient {
         return out;
     }
 
-    public MyClient(String address, int port) {
+    public MyClient(String address, int port, ClientFrame clientFrame) {
         // establish a connection
         try {
             System.out.println("Connected");
@@ -48,6 +48,8 @@ public class MyClient {
             // sends output to the socket
             out = new DataOutputStream(socket.getOutputStream());
             isConnected=true;
+
+            this.parent = clientFrame;
             
         } catch (UnknownHostException u) {
             System.out.println("MyClient host exception " + u);
@@ -71,8 +73,14 @@ public class MyClient {
                         String msg = input.readUTF();
 
                         System.out.println("Message received: " + msg);
-                        Messages.append("<br>").append(msg);
-                        newMessage = true;
+                        Messages.add(msg);
+
+                        String chatHistory = "";
+                        for(String message : Messages) {
+                            chatHistory += parent.convertMessageToHtml(message);
+                        }
+                        parent.ChatComponent.setText(chatHistory);
+
                         System.out.println("Messages STRING: " + Messages);
                     }
                 } catch (IOException e) {
@@ -105,7 +113,6 @@ public class MyClient {
             out.close();
             input.close();
             socket.close();
-            readThread.stop();
             scn.close();
         } catch (IOException ex) {
             System.out.println("Error while trying to close connection " + ex);
