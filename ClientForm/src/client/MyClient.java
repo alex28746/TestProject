@@ -1,9 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package pewchatclient;
+package client;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -13,8 +8,6 @@ import java.net.UnknownHostException;
 import java.util.*;
 
 public class MyClient {
-    // initialize socket and input output streams
-
     private Socket socket = null;
     private DataInputStream input = null;
     private DataOutputStream out = null;
@@ -38,7 +31,6 @@ public class MyClient {
     }
 
     public MyClient(String address, int port, ClientFrame clientFrame) {
-        // establish a connection
         try {
             System.out.println("Connected");
             socket = new Socket(address, port);
@@ -56,7 +48,6 @@ public class MyClient {
         } catch (IOException i) {
             System.out.println("MyClient io exception " + i);
         }
-        System.out.println("aleksej = " + isConnected);
     }
 
     void ReadMessage() {

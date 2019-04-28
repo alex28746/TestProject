@@ -1,4 +1,4 @@
-package pewchatclient;
+package client;
 
 import org.junit.jupiter.api.Test;
 

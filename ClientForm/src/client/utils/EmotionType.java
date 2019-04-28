@@ -1,4 +1,4 @@
-package pewchatclient.utils;
+package client.utils;
 
 public enum EmotionType {
     JOY,
