@@ -276,11 +276,13 @@ public class ClientFrame extends javax.swing.JFrame {
                         break;
                     }
                     default: {
-                        throw new IllegalArgumentException("Not correct type for emotion in converting " + emotion);
+                        //tentative
+                        imgsrc = new File(UNKNOWN_JPG_PATH).toURL().toExternalForm();
+                        System.err.println("Not correct type for emotion in converting " + emotion);
                     }
                 }
             } catch (MalformedURLException ex) {
-                System.out.println(ex);
+                System.err.println(ex);
             }
             String convertedMessage = message.replace("|[" + emotion + "]", "");
             return "<img src='" + imgsrc + "' width='20' height='20'/>&nbsp;&nbsp;" + convertedMessage + "<br>";
