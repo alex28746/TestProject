@@ -15,6 +15,7 @@ public class ClientFrame extends javax.swing.JFrame {
     private static final String SADNESS_IMG_PATH = "ClientForm/images/sadness.jpg";
     private static final String FEAR_IMG_PATH = "ClientForm/images/fear.jpg";
     private static final String UNKNOWN_JPG_PATH = "ClientForm/images/unknown.jpg";
+    private static final String LOADER_GIF_PATH = "ClientForm/images/loader.gif";
 
     MyClient client;
     static String msgRecieved;
@@ -268,6 +269,10 @@ public class ClientFrame extends javax.swing.JFrame {
                     }
                     case "unknown": {
                         imgsrc = new File(UNKNOWN_JPG_PATH).toURL().toExternalForm();
+                        break;
+                    }
+                    case "loader": {
+                        imgsrc = new File(LOADER_GIF_PATH).toURL().toExternalForm();
                         break;
                     }
                     default: {
