@@ -8,12 +8,19 @@ import java.net.UnknownHostException;
 import java.util.*;
 
 public class MyClient {
+
+    private static final String CMD_USERNAME = "#cmd_username:";
+    private static final String CMD_ONLINE_USERS = "#cmd_online_users:";
+
+    private static final String COMMA_SEPARATOR = ",";
+
     private Socket socket = null;
     private DataInputStream input = null;
     private DataOutputStream out = null;
     Scanner scn = new Scanner(System.in);
     Thread readThread;
     List<String> Messages = new ArrayList<>();
+    List<String> UsersStatus = new ArrayList<>();
     boolean newMessage = false;
     String status="";
     Boolean isConnected=false;
@@ -57,21 +64,39 @@ public class MyClient {
             public void run() {
                 try {
                     while (true) {
-                        System.out.println("RUNNED1");
                         System.out.println("ReadMessage while called.");
 
                         // read the message sent to this client
                         String msg = input.readUTF();
 
                         System.out.println("Message received: " + msg);
-                        Messages.add(msg);
+
+                        if (msg.contains(CMD_USERNAME)) {
+                            String username = msg.replace(CMD_USERNAME, "");
+                            Messages.add(username + " connected to chat!");
+                        } else if(msg.contains(CMD_ONLINE_USERS)) {
+                            String onlineUsers = msg.replace(CMD_ONLINE_USERS, "");
+                            String[] onlineUsersArray = onlineUsers.split(COMMA_SEPARATOR);
+
+                            UsersStatus.clear();
+                            for(String onlineUser : onlineUsersArray) {
+                                UsersStatus.add(onlineUser + "\n");
+                            }
+                        } else {
+                            Messages.add(msg);
+                        }
 
                         String chatHistory = "";
+                        String usersStatus = "";
                         for(String message : Messages) {
                             chatHistory += parent.convertMessageToHtml(message);
                         }
-                        parent.ChatComponent.setText(chatHistory);
+                        for(String status : UsersStatus) {
+                            usersStatus += status;
+                        }
 
+                        parent.setChatComponentText(chatHistory);
+                        parent.setStatusAreaText(usersStatus);
                         System.out.println("Messages STRING: " + Messages);
                     }
                 } catch (IOException e) {

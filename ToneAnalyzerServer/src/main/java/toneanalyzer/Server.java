@@ -16,7 +16,6 @@ import java.util.logging.Logger;
 public class Server implements Runnable {
     private ServerSocket serverSocket;
     private Socket socket;
-    private int i = 1;
 //    private ArrayList<UserListener> users = new ArrayList<UserListener>();
 
     private final int PORT = 9999;
@@ -45,7 +44,7 @@ public class Server implements Runnable {
                 System.out.println("Creating a new user handler for this client...");
 
                 // Create a new handler object for handling this request.
-                UserListener newUser = new UserListener(socket, "Client" + i, inputStream, outputStream, watsonService);
+                UserListener newUser = new UserListener(socket, "Client", inputStream, outputStream, watsonService);
 
                 // Create a new Thread with this object.
                 Thread t = new Thread(newUser);
@@ -61,10 +60,6 @@ public class Server implements Runnable {
                 // increment i for new client.
                 // i is used for naming only, and can be replaced
                 // by any naming scheme
-                i++;
-                for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
-                    System.out.println(ToneAnalyzerApp.users.get(i).name + " is connected");
-                }
             } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }

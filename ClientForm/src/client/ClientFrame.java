@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import javax.swing.*;
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.Objects;
 
 import static client.MyClient.OtherUserStatus;
 
@@ -14,6 +15,8 @@ public class ClientFrame extends javax.swing.JFrame {
     private static final String JOY_IMG_PATH = "ClientForm/images/joy.jpg";
     private static final String SADNESS_IMG_PATH = "ClientForm/images/sadness.jpg";
     private static final String FEAR_IMG_PATH = "ClientForm/images/fear.jpg";
+    private static final String TENTATIVE_IMG_PATH = "ClientForm/images/fear.jpg";
+    private static final String ANGRY_IMG_PATH = "ClientForm/images/angry.jpg";
     private static final String UNKNOWN_JPG_PATH = "ClientForm/images/unknown.jpg";
     private static final String LOADER_GIF_PATH = "ClientForm/images/loader.gif";
 
@@ -66,6 +69,8 @@ public class ClientFrame extends javax.swing.JFrame {
         CreateGroupBtn = new javax.swing.JButton();
         ChatComponent = new JTextPane();
 
+        ChatComponent.setEditable(false);
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Praca inz [DEV]");
         setResizable(false);
@@ -109,7 +114,7 @@ public class ClientFrame extends javax.swing.JFrame {
         MsgTextArea.setRows(5);
         jScrollPane2.setViewportView(MsgTextArea);
 
-        UserStatusLabel.setText("Users Status");
+        UserStatusLabel.setText("Online users:");
 
         UsersStatusArea.setColumns(20);
         UsersStatusArea.setRows(5);
@@ -138,11 +143,8 @@ public class ClientFrame extends javax.swing.JFrame {
         jScrollPane4.setViewportView(GroupsjList);
 
         GroupsLabel.setText("Emotions");
-
         JoinBtn.setText("1 [DEV]");
-
         LeaveBtn.setText("2 [DEV]");
-
         CreateGroupBtn.setText("Dev button");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -166,8 +168,8 @@ public class ClientFrame extends javax.swing.JFrame {
                                                                 .addComponent(PortNumberLabel))
                                                         .addGroup(layout.createSequentialGroup()
                                                                 .addComponent(ConnectBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 101, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                .addGap(72, 72, 72)
-                                                                .addComponent(DisconnectBtn)))
+                                                                .addGap(72, 72, 72)))
+                                                // .addComponent(DisconnectBtn)))
                                                 .addGap(18, 18, 18)
                                                 .addComponent(PortNumTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -177,9 +179,9 @@ public class ClientFrame extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGap(18, 18, 18)
-                                                .addComponent(StatusLabel)
+                                                //.addComponent(StatusLabel)
                                                 .addGap(18, 18, 18)
-                                                .addComponent(StatusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                // .addComponent(StatusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addContainerGap(174, Short.MAX_VALUE))
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGap(39, 39, 39)
@@ -208,14 +210,14 @@ public class ClientFrame extends javax.swing.JFrame {
                                         .addComponent(UsernameLabel)
                                         .addComponent(UsernameTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(PortNumberLabel)
-                                        .addComponent(PortNumTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(StatusLabel)
-                                        .addComponent(StatusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(PortNumTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                //.addComponent(StatusLabel)
+                                //.addComponent(StatusComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGap(33, 33, 33)
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(DisconnectBtn)
+                                                        // .addComponent(DisconnectBtn)
                                                         .addComponent(ConnectBtn)))
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -275,8 +277,15 @@ public class ClientFrame extends javax.swing.JFrame {
                         imgsrc = new File(LOADER_GIF_PATH).toURL().toExternalForm();
                         break;
                     }
+                    case "anger": {
+                        imgsrc = new File(ANGRY_IMG_PATH).toURL().toExternalForm();
+                        break;
+                    }
+                    case "tentative": {
+                        imgsrc = new File(TENTATIVE_IMG_PATH).toURL().toExternalForm();
+                        break;
+                    }
                     default: {
-                        //tentative
                         imgsrc = new File(UNKNOWN_JPG_PATH).toURL().toExternalForm();
                         System.err.println("Not correct type for emotion in converting " + emotion);
                     }
@@ -338,6 +347,18 @@ public class ClientFrame extends javax.swing.JFrame {
         }
     }
 
+    public void setStatusAreaText(String statuses) {
+        if (!Objects.isNull(statuses)) {
+            UsersStatusArea.setText(statuses);
+        }
+    }
+
+    public void setChatComponentText(String chatText) {
+        if (!Objects.isNull(chatText)) {
+            ChatComponent.setText(chatText);
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -394,5 +415,5 @@ public class ClientFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
-    public JTextPane ChatComponent;
+    private JTextPane ChatComponent;
 }

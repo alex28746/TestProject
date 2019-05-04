@@ -7,9 +7,18 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
 
 public class UserListener implements Runnable {
+
+    private static final String CMD_SEND_USERNAME = "#cmd_username:";
+    private static final String CMD_ONLINE_USERS = "#cmd_online_users:";
+
+    private static final String COMMA_SEPARATOR = ",";
+
+    private static Set<String> onlineUsers = new HashSet<>();
 
     Scanner scan = new Scanner(System.in);
     String name;
@@ -37,18 +46,24 @@ public class UserListener implements Runnable {
                 message = inputStream.readUTF();
                 System.out.println(message);
                 if (message.equals("logout")) {
-                    System.out.println(name + " disconnected!");
+                    System.out.println(name + " disconnected from chat!");
+
+                    onlineUsers.remove(name);
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(this.name + " disconnected!");
+                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_ONLINE_USERS + prepareUsersStatusForSending(onlineUsers));
                     }
                     this.isOnline = false;
                     closeConnection();
                     break;
                 } else if (message.contains("#####")) {
-                    this.name = message.replace("#####", "");
                     System.out.println(name + " connected to chat!");
+
+                    this.name = message.replace("#####", "");
+                    onlineUsers.add(name);
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
-                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(this.name + " connected to chat!");
+                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_SEND_USERNAME + this.name);
+                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_ONLINE_USERS + prepareUsersStatusForSending(onlineUsers));
                     }
                 } else {
                     EmotionModel emotionModel = new EmotionModel();
@@ -57,7 +72,6 @@ public class UserListener implements Runnable {
                     }
                     System.out.println(name + " is sending: " + message);
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
-                        System.out.println("Sended to another person model");
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(name + " : " + message + prepareEmotionModelForSending(emotionModel));
                     }
                 }
@@ -69,6 +83,10 @@ public class UserListener implements Runnable {
             }
         }
         closeConnection();
+    }
+
+    private String prepareUsersStatusForSending(Set<String> statuses) {
+        return String.join(COMMA_SEPARATOR, statuses);
     }
 
     private String prepareEmotionModelForSending(EmotionModel emotionModel) {
