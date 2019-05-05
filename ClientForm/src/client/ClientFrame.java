@@ -68,8 +68,10 @@ public class ClientFrame extends javax.swing.JFrame {
         LeaveBtn = new javax.swing.JButton();
         CreateGroupBtn = new javax.swing.JButton();
         ChatComponent = new JTextPane();
+        MaxUsersEmotionPane = new JTextPane();
 
         ChatComponent.setEditable(false);
+        MaxUsersEmotionPane.setEditable(false);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Praca inz [DEV]");
@@ -100,6 +102,7 @@ public class ClientFrame extends javax.swing.JFrame {
             }
         });
         ChatComponent.setContentType("text/html");
+        MaxUsersEmotionPane.setContentType("text/html");
 
         jScrollPane1.setViewportView(ChatComponent);
 
@@ -140,12 +143,10 @@ public class ClientFrame extends javax.swing.JFrame {
                 return strings[i];
             }
         });
-        jScrollPane4.setViewportView(GroupsjList);
+        jScrollPane4.setViewportView(MaxUsersEmotionPane);
 
-        GroupsLabel.setText("Emotions");
-        JoinBtn.setText("1 [DEV]");
-        LeaveBtn.setText("2 [DEV]");
-        CreateGroupBtn.setText("Dev button");
+        GroupsLabel.setText("General emotions:");
+        JoinBtn.setText("Summary");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -188,14 +189,14 @@ public class ClientFrame extends javax.swing.JFrame {
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addGroup(layout.createSequentialGroup()
                                                                 .addComponent(GroupsLabel)
-                                                                .addGap(18, 18, 18)
-                                                                .addComponent(CreateGroupBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addGap(18, 18, 18))
+                                                        //.addComponent(CreateGroupBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                         .addComponent(UserStatusLabel)
                                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                                                         .addComponent(JoinBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                                        .addComponent(LeaveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                                // .addComponent(LeaveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                 .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING)
                                                                 .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)))
                                                 .addGap(0, 51, Short.MAX_VALUE))))
@@ -232,15 +233,15 @@ public class ClientFrame extends javax.swing.JFrame {
                                                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 161, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGap(18, 18, 18)
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                                        .addComponent(GroupsLabel)
-                                                        .addComponent(CreateGroupBtn))
+                                                        .addComponent(GroupsLabel))
+                                                //.addComponent(CreateGroupBtn))
                                                 .addGap(18, 18, 18)
                                                 .addComponent(jScrollPane4)))
                                 .addGap(29, 29, 29)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(SendBtn)
-                                        .addComponent(JoinBtn)
-                                        .addComponent(LeaveBtn))
+                                        .addComponent(JoinBtn))
+                                // .addComponent(LeaveBtn))
                                 .addContainerGap(42, Short.MAX_VALUE))
         );
 
@@ -248,8 +249,11 @@ public class ClientFrame extends javax.swing.JFrame {
     }
 
     public String convertMessageToHtml(String message) {
+        message = message.replaceAll("\"", "");
         String emotion = StringUtils.substringBetween(message, "|[", "]");
+
         if (emotion != null && emotion.length() > 0 && !"null".equals(emotion)) {
+            emotion = emotion.replaceAll("\"", "");
             String imgsrc = "";
             try {
                 switch (emotion.toLowerCase()) {
@@ -359,6 +363,12 @@ public class ClientFrame extends javax.swing.JFrame {
         }
     }
 
+    public void setMaxUsersEmotionPaneText(String text) {
+        if (!Objects.isNull(text)) {
+            MaxUsersEmotionPane.setText(text);
+        }
+    }
+
     /**
      * @param args the command line arguments
      */
@@ -416,4 +426,5 @@ public class ClientFrame extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private JTextPane ChatComponent;
+    private JTextPane MaxUsersEmotionPane;
 }

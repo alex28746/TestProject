@@ -1,24 +1,27 @@
 package toneanalyzer;
 
+import toneanalyzer.model.Emotion;
 import toneanalyzer.model.EmotionModel;
+import toneanalyzer.model.EmotionSummaryModel;
 import toneanalyzer.service.WatsonService;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
-import java.util.HashSet;
-import java.util.Scanner;
-import java.util.Set;
+import java.util.*;
 
 public class UserListener implements Runnable {
 
     private static final String CMD_SEND_USERNAME = "#cmd_username:";
     private static final String CMD_ONLINE_USERS = "#cmd_online_users:";
+    private static final String CMD_USERS_SUMMARY_EMOTION = "#cmd_users_summary_emotion:";
 
     private static final String COMMA_SEPARATOR = ",";
 
     private static Set<String> onlineUsers = new HashSet<>();
+
+    private static Map<String, EmotionSummaryModel> usersSummaryEmotion = new HashMap<>();
 
     Scanner scan = new Scanner(System.in);
     String name;
@@ -49,9 +52,13 @@ public class UserListener implements Runnable {
                     System.out.println(name + " disconnected from chat!");
 
                     onlineUsers.remove(name);
+
+                    Map<String, Emotion> maxEmotionForAllUsers = getMaxEmotionForAllUsers(usersSummaryEmotion);
+
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(this.name + " disconnected!");
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_ONLINE_USERS + prepareUsersStatusForSending(onlineUsers));
+                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_USERS_SUMMARY_EMOTION + maxEmotionForAllUsers);
                     }
                     this.isOnline = false;
                     closeConnection();
@@ -61,9 +68,14 @@ public class UserListener implements Runnable {
 
                     this.name = message.replace("#####", "");
                     onlineUsers.add(name);
+                    usersSummaryEmotion.put(name, new EmotionSummaryModel());
+
+                    Map<String, Emotion> maxEmotionForAllUsers = getMaxEmotionForAllUsers(usersSummaryEmotion);
+
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_SEND_USERNAME + this.name);
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_ONLINE_USERS + prepareUsersStatusForSending(onlineUsers));
+                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_USERS_SUMMARY_EMOTION + maxEmotionForAllUsers);
                     }
                 } else {
                     EmotionModel emotionModel = new EmotionModel();
@@ -71,8 +83,11 @@ public class UserListener implements Runnable {
                         emotionModel = watsonService.getEmotion(message);
                     }
                     System.out.println(name + " is sending: " + message);
+                    String preparedEmotionModel = prepareEmotionModelForSending(emotionModel);
+                    Map<String, Emotion> maxEmotionForAllUsers = getMaxEmotionForAllUsers(usersSummaryEmotion);
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
-                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(name + " : " + message + prepareEmotionModelForSending(emotionModel));
+                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(name + " : " + message + preparedEmotionModel);
+                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_USERS_SUMMARY_EMOTION + maxEmotionForAllUsers);
                     }
                 }
             } catch (IOException e) {
@@ -85,11 +100,57 @@ public class UserListener implements Runnable {
         closeConnection();
     }
 
+    private Map<String, Emotion> getMaxEmotionForAllUsers(Map<String, EmotionSummaryModel> emotionSummaryModelMap) {
+        Map<String, Emotion> result = new HashMap<>();
+
+        for (String key: emotionSummaryModelMap.keySet()) {
+            result.put(key, emotionSummaryModelMap.get(key).getMax());
+        }
+        return result;
+    }
+
     private String prepareUsersStatusForSending(Set<String> statuses) {
         return String.join(COMMA_SEPARATOR, statuses);
     }
 
     private String prepareEmotionModelForSending(EmotionModel emotionModel) {
+        EmotionSummaryModel emotionSummaryModel = usersSummaryEmotion.get(this.name);
+
+        if(emotionSummaryModel == null) {
+            emotionSummaryModel = new EmotionSummaryModel();
+        }
+
+        switch (emotionModel.getDisplayName().toLowerCase()) {
+            case "analytical": {
+                emotionSummaryModel.incrementAnalytical();
+                break;
+            }
+            case "anger": {
+                emotionSummaryModel.incrementAnger();
+                break;
+            }
+            case "fear": {
+                emotionSummaryModel.incrementFear();
+                break;
+            }
+            case "joy": {
+                emotionSummaryModel.incrementJoy();
+                break;
+            }
+            case "sadness": {
+                emotionSummaryModel.incrementSadness();
+                break;
+            }
+            case "tentative": {
+                emotionSummaryModel.incrementTentative();
+                break;
+            }
+            default: {
+                System.err.println("Emotion model does not exist! = " + emotionModel.getDisplayName().toLowerCase());
+            }
+        }
+        usersSummaryEmotion.put(this.name, emotionSummaryModel);
+
         return "|[" + emotionModel.getDisplayName() + "]";
     }
 
