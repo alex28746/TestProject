@@ -21,9 +21,6 @@ public class ClientFrame extends javax.swing.JFrame {
     private static final String LOADER_GIF_PATH = "ClientForm/images/loader.gif";
 
     MyClient client;
-    static String msgRecieved;
-
-    private String chatHistory = "";
 
     public ClientFrame() {
         initComponents();
@@ -302,10 +299,6 @@ public class ClientFrame extends javax.swing.JFrame {
         } else {
             return "<p>" + message + "</p><br/>";
         }
-    }
-
-    public void addMessage(String message) {
-        chatHistory += "<p>" + message + "</p><br>";
     }
 
     private void DisconnectBtnActionPerformed(java.awt.event.ActionEvent evt) {

@@ -5,9 +5,6 @@ import java.awt.event.WindowEvent;
 
 public class ClientRunner {
 
-    /**
-     * @param args the command line arguments
-     */
     static ClientFrame frame;
 
     public static void main(String[] args) {

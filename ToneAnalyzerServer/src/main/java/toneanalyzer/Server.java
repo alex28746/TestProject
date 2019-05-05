@@ -54,12 +54,10 @@ public class Server implements Runnable {
                 // add this client to active clients list
                 ToneAnalyzerApp.users.add(newUser);
 
-                // start the thread.
+                // start the UserListener
                 t.start();
 
-                // increment i for new client.
-                // i is used for naming only, and can be replaced
-                // by any naming scheme
+
             } catch (IOException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }

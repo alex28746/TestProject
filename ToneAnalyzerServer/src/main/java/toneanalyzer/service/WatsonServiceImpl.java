@@ -43,9 +43,6 @@ public class WatsonServiceImpl implements WatsonService {
             EmotionModel emotionModel = new EmotionModel();
             emotionModel.setDisplayName("unknown");
             return emotionModel;
-            // TODO. catch при подключении левые сообщения летят. Обработать их.
-            // TODO. Если настроение не распознано, то ничего не возвращает. Проверить этот ответ.
-            // TODO. I am so sexy < это сообщение.
         }
     }
 }

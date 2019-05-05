@@ -23,7 +23,6 @@ public class UserListener implements Runnable {
 
     private static Map<String, EmotionSummaryModel> usersSummaryEmotion = new HashMap<>();
 
-    Scanner scan = new Scanner(System.in);
     String name;
     Socket socket;
     DataInputStream inputStream;
@@ -49,18 +48,18 @@ public class UserListener implements Runnable {
                 message = inputStream.readUTF();
                 System.out.println(message);
                 if (message.equals("logout")) {
-                    System.out.println(name + " disconnected from chat!");
+                        System.out.println(name + " disconnected from chat!");
 
-                    onlineUsers.remove(name);
+                        onlineUsers.remove(name);
+                        //return max emotion for all users
+                        Map<String, Emotion> maxEmotionForAllUsers = getMaxEmotionForAllUsers(usersSummaryEmotion);
 
-                    Map<String, Emotion> maxEmotionForAllUsers = getMaxEmotionForAllUsers(usersSummaryEmotion);
-
-                    for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
-                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(this.name + " disconnected!");
-                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_ONLINE_USERS + prepareUsersStatusForSending(onlineUsers));
-                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_USERS_SUMMARY_EMOTION + maxEmotionForAllUsers);
-                    }
-                    this.isOnline = false;
+                        for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
+                            ToneAnalyzerApp.users.get(i).outputStream.writeUTF(this.name + " disconnected!");
+                            ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_ONLINE_USERS + prepareUsersStatusForSending(onlineUsers));
+                            ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_USERS_SUMMARY_EMOTION + maxEmotionForAllUsers);
+                        }
+                        this.isOnline = false;
                     closeConnection();
                     break;
                 } else if (message.contains("#####")) {
@@ -80,6 +79,7 @@ public class UserListener implements Runnable {
                 } else {
                     EmotionModel emotionModel = new EmotionModel();
                     if (message.length() > 0) {
+                        // send message to IBM tone analyzer service
                         emotionModel = watsonService.getEmotion(message);
                     }
                     System.out.println(name + " is sending: " + message);
@@ -157,10 +157,8 @@ public class UserListener implements Runnable {
     public void closeConnection() {
         try {
             // closing resources
-            this.scan.close();
             this.inputStream.close();
             this.outputStream.close();
-            this.scan.close();
         } catch (IOException e) {
             System.err.println("Error while trying to close streams " + e);
         }

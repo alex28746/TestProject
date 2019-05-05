@@ -8,7 +8,7 @@ import java.awt.GradientPaint;
 import java.awt.Point;
 import java.awt.RadialGradientPaint;
 import java.awt.geom.Point2D;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -39,15 +39,17 @@ public class PieChartDemo extends ApplicationFrame {
 
     public PieChartDemo(String title) {
         super(title);
-        setContentPane(createDemoPanel());
+        add(createDemoPanel());
+        add(createDemoPanel());
+        // setContentPane(jScrollPane1);
     }
 
     private PieDataset createDataset() {
         DefaultPieDataset dataset = new DefaultPieDataset();
-        dataset.setValue("Оплата жилья" , new Double( 7035.8));
-        dataset.setValue("Школа, фитнес", new Double( 9200.0));
-        dataset.setValue("Развлечения"  , new Double(16450.0));
-        dataset.setValue("Дача, стройка", new Double(40000.0));
+        dataset.setValue("Оплата жилья" , new Double( 25.0));
+        dataset.setValue("Школа, фитнес", new Double( 25.0));
+        dataset.setValue("Развлечения"  , new Double(25.0));
+        dataset.setValue("Дача, стройка", new Double(25.0));
         return dataset;
     }
 

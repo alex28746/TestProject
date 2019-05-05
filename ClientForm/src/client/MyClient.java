@@ -22,7 +22,6 @@ public class MyClient {
     private Socket socket = null;
     private DataInputStream input = null;
     private DataOutputStream out = null;
-    Scanner scn = new Scanner(System.in);
     Thread readThread;
     List<String> Messages = new ArrayList<>();
     List<String> UsersStatus = new ArrayList<>();
@@ -150,7 +149,6 @@ public class MyClient {
             out.close();
             input.close();
             socket.close();
-            scn.close();
         } catch (IOException ex) {
             System.out.println("Error while trying to close connection " + ex);
         }
