@@ -16,11 +16,12 @@ public class UserListener implements Runnable {
     private static final String CMD_SEND_USERNAME = "#cmd_username:";
     private static final String CMD_ONLINE_USERS = "#cmd_online_users:";
     private static final String CMD_USERS_SUMMARY_EMOTION = "#cmd_users_summary_emotion:";
+    private static final String CMD_GET_AVERAGE_EMOTION_FOR_ALL_USERS = "#cmd_get_average_emotion_for_all_users";
+    private static final String CMD_SEND_AVERAGE_EMOTION_FOR_ALL_USERS = "#cmd_send_average_emotion_for_all_users:";
 
     private static final String COMMA_SEPARATOR = ",";
 
     private static Set<String> onlineUsers = new HashSet<>();
-
     private static Map<String, EmotionSummaryModel> usersSummaryEmotion = new HashMap<>();
 
     String name;
@@ -76,6 +77,11 @@ public class UserListener implements Runnable {
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_ONLINE_USERS + prepareUsersStatusForSending(onlineUsers));
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_USERS_SUMMARY_EMOTION + maxEmotionForAllUsers);
                     }
+                } else if(message.contains(CMD_GET_AVERAGE_EMOTION_FOR_ALL_USERS)) {
+                    Map<String, Map<Emotion, Double>> averageEmotionForAllUsers = getAverageEmotionForAllUsers(usersSummaryEmotion);
+                    for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
+                        outputStream.writeUTF(CMD_SEND_AVERAGE_EMOTION_FOR_ALL_USERS + averageEmotionForAllUsers);
+                    }
                 } else {
                     EmotionModel emotionModel = new EmotionModel();
                     if (message.length() > 0) {
@@ -91,13 +97,23 @@ public class UserListener implements Runnable {
                     }
                 }
             } catch (IOException e) {
-                System.err.println("Error when try to reading input stream " + e);
+                System.err.println("Error when try to read input stream " + e);
                 closeConnection();
                 this.isOnline = false;
                 break;
             }
         }
         closeConnection();
+    }
+
+    private Map<String, Map<Emotion, Double>> getAverageEmotionForAllUsers(Map<String, EmotionSummaryModel> emotionSummaryModelMap) {
+        Map<String, Map<Emotion, Double>> result = new HashMap<>();
+
+        for (String key: emotionSummaryModelMap.keySet()) {
+            Map<Emotion, Double> emotionAverageMap = emotionSummaryModelMap.get(key).getAverage();
+            result.put(key, emotionAverageMap);
+        }
+        return result;
     }
 
     private Map<String, Emotion> getMaxEmotionForAllUsers(Map<String, EmotionSummaryModel> emotionSummaryModelMap) {

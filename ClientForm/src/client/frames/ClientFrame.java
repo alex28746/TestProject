@@ -1,5 +1,6 @@
-package client;
+package client.frames;
 
+import client.ClientSocket;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
@@ -7,7 +8,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.util.Objects;
 
-import static client.MyClient.OtherUserStatus;
+import static client.ClientSocket.OtherUserStatus;
 
 public class ClientFrame extends javax.swing.JFrame {
 
@@ -20,7 +21,9 @@ public class ClientFrame extends javax.swing.JFrame {
     private static final String UNKNOWN_JPG_PATH = "ClientForm/images/unknown.jpg";
     private static final String LOADER_GIF_PATH = "ClientForm/images/loader.gif";
 
-    MyClient client;
+    private static final String CMD_GET_AVERAGE_EMOTION_FOR_ALL_USERS = "#cmd_get_average_emotion_for_all_users";
+
+    ClientSocket client;
 
     public ClientFrame() {
         initComponents();
@@ -143,7 +146,13 @@ public class ClientFrame extends javax.swing.JFrame {
         jScrollPane4.setViewportView(MaxUsersEmotionPane);
 
         GroupsLabel.setText("General emotions:");
+
         JoinBtn.setText("Summary");
+        JoinBtn.addActionListener((new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                client.SendMessage(CMD_GET_AVERAGE_EMOTION_FOR_ALL_USERS);
+            }
+        }));
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -315,13 +324,13 @@ public class ClientFrame extends javax.swing.JFrame {
 
     private void ConnectBtnActionPerformed(java.awt.event.ActionEvent evt) {
         System.out.println("HashMap in the beginning of Connect size " + OtherUserStatus.size());
-        client = new MyClient(AddressTextField.getText(), Integer.parseInt(PortNumTextField.getText()), this);
+        client = new ClientSocket(AddressTextField.getText(), Integer.parseInt(PortNumTextField.getText()), this);
         DisconnectBtn.setEnabled(true);
         ConnectBtn.setEnabled(false);
         client.SendMessage("#####" + UsernameTextField.getText());
         client.ReadMessage();
         System.out.println("HashMap in the end of Thread 1 size " + OtherUserStatus.size());
-        System.out.println("Size of HashMap  after thread 2 is " + MyClient.OtherUserStatus.size());
+        System.out.println("Size of HashMap  after thread 2 is " + ClientSocket.OtherUserStatus.size());
     }
 
     private void SendBtnActionPerformed(java.awt.event.ActionEvent evt) {

@@ -1,14 +1,4 @@
-package client;
-
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GradientPaint;
-import java.awt.Point;
-import java.awt.RadialGradientPaint;
-import java.awt.geom.Point2D;
-import javax.swing.*;
+package client.frames;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -20,11 +10,16 @@ import org.jfree.data.general.DefaultPieDataset;
 import org.jfree.data.general.PieDataset;
 import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.HorizontalAlignment;
-import org.jfree.ui.RectangleEdge;
 import org.jfree.ui.RectangleInsets;
-import org.jfree.ui.RefineryUtilities;
+import toneanalyzer.model.Emotion;
 
-public class PieChartDemo extends ApplicationFrame {
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.WindowEvent;
+import java.awt.geom.Point2D;
+import java.util.Map;
+
+public class SummaryFrame extends ApplicationFrame {
 
     private static final long serialVersionUID = 1L;
 
@@ -37,26 +32,44 @@ public class PieChartDemo extends ApplicationFrame {
         ChartFactory.setChartTheme(new StandardChartTheme("JFree/Shadow", true));
     }
 
-    public PieChartDemo(String title) {
-        super(title);
-        add(createDemoPanel());
-        add(createDemoPanel());
-        // setContentPane(jScrollPane1);
+    public SummaryFrame(Map<String, Map<Emotion, Double>> averageModelMap) {
+        super("Summary");
+        JPanel jPanel = new JPanel();
+        jPanel.setLayout(new GridLayout(0, 1));
+        JScrollPane jScrollPane = new JScrollPane(jPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+
+        for(String username : averageModelMap.keySet()) {
+            jPanel.add(createUserDiagram(username, averageModelMap.get(username)));
+        }
+        jScrollPane.setViewportView(jPanel);
+
+        setContentPane(jScrollPane);
+        pack();
+        setVisible(true);
     }
 
-    private PieDataset createDataset() {
+    @Override
+    public void windowClosing(WindowEvent e) {
+        this.setVisible(false);
+    }
+
+    private PieDataset createDataset(Map<Emotion, Double> emotions) {
         DefaultPieDataset dataset = new DefaultPieDataset();
-        dataset.setValue("Оплата жилья" , new Double( 25.0));
-        dataset.setValue("Школа, фитнес", new Double( 25.0));
-        dataset.setValue("Развлечения"  , new Double(25.0));
-        dataset.setValue("Дача, стройка", new Double(25.0));
+
+        System.out.println(emotions.toString());
+        for(Object emotion : emotions.keySet()) {
+            try {
+                dataset.setValue(emotion.toString(), emotions.get(emotion));
+            } catch(Exception e) {
+                System.out.println("Cannot convert map in SummaryFrame, " + e);
+            }
+        }
         return dataset;
     }
 
-    private JFreeChart createChart(PieDataset dataset)
-    {
+    private JFreeChart createChart(String username, PieDataset dataset) {
         JFreeChart chart = ChartFactory.createPieChart(
-                "Семейные расходы",  // chart title
+                username,  // chart title
                 dataset,             // data
                 false,               // no legend
                 true,                // tooltips
@@ -64,7 +77,7 @@ public class PieChartDemo extends ApplicationFrame {
         );
 
         // Определение фона графического изображения
-        chart.setBackgroundPaint(new GradientPaint(new Point(  0,   0), new Color(20, 20, 20),
+        chart.setBackgroundPaint(new GradientPaint(new Point(0, 0), new Color(20, 20, 20),
                 new Point(400, 200), Color.DARK_GRAY));
         // Определение заголовка
         TextTitle t = chart.getTitle();
@@ -72,33 +85,25 @@ public class PieChartDemo extends ApplicationFrame {
         t.setPaint(new Color(240, 240, 240));
         t.setFont(new Font("Arial", Font.BOLD, 26));
 
-        // Определение подзаголовка
-        TextTitle source = new TextTitle("Семейные расходы за текущий месяц",
-                new Font("Courier New", Font.PLAIN, 12));
-        source.setPaint(Color.WHITE);
-        source.setPosition(RectangleEdge.BOTTOM);
-        source.setHorizontalAlignment(HorizontalAlignment.RIGHT);
-        chart.addSubtitle(source);
-
         PiePlot plot = (PiePlot) chart.getPlot();
         plot.setBackgroundPaint(null);
         plot.setInteriorGap(0.04);
         plot.setOutlineVisible(false);
 
-        RadialGradientPaint rgpBlue  ;
-        RadialGradientPaint rgpRed   ;
-        RadialGradientPaint rgpGreen ;
+        RadialGradientPaint rgpBlue;
+        RadialGradientPaint rgpRed;
+        RadialGradientPaint rgpGreen;
         RadialGradientPaint rgpYellow;
 
-        rgpBlue   = createGradientPaint(colors[0], Color.BLUE  );
-        rgpRed    = createGradientPaint(colors[1], Color.RED   );
-        rgpGreen  = createGradientPaint(colors[2], Color.GREEN );
+        rgpBlue = createGradientPaint(colors[0], Color.BLUE);
+        rgpRed = createGradientPaint(colors[1], Color.RED);
+        rgpGreen = createGradientPaint(colors[2], Color.GREEN);
         rgpYellow = createGradientPaint(colors[3], Color.YELLOW);
 
         // Определение секций круговой диаграммы
-        plot.setSectionPaint("Оплата жилья" , rgpBlue  );
-        plot.setSectionPaint("Школа, фитнес", rgpRed   );
-        plot.setSectionPaint("Развлечения"  , rgpGreen );
+        plot.setSectionPaint("Оплата жилья", rgpBlue);
+        plot.setSectionPaint("Школа, фитнес", rgpRed);
+        plot.setSectionPaint("Развлечения", rgpGreen);
         plot.setSectionPaint("Дача, стройка", rgpYellow);
         plot.setBaseSectionOutlinePaint(Color.WHITE);
         plot.setSectionOutlinesVisible(true);
@@ -120,25 +125,17 @@ public class PieChartDemo extends ApplicationFrame {
         float radius = 200;
         float[] dist = {0.0f, 1.0f};
         return new RadialGradientPaint(center, radius, dist,
-                new Color[] {c1, c2});
+                new Color[]{c1, c2});
     }
 
-    public JPanel createDemoPanel() {
-        JFreeChart chart = createChart(createDataset());
+    public JPanel createUserDiagram(String username, Map<Emotion, Double> emotions) {
+        JFreeChart chart = createChart(username, createDataset(emotions));
         chart.setPadding(new RectangleInsets(4, 8, 2, 2));
         ChartPanel panel = new ChartPanel(chart);
         panel.setFillZoomRectangle(true);
-        panel.setMouseWheelEnabled(true);
-        panel.setPreferredSize(new Dimension(600, 300));
+        // panel.setMouseWheelEnabled(true);
+        panel.setPreferredSize(new Dimension(600, 220));
         return panel;
-    }
-
-    public static void main(String[] args)
-    {
-        PieChartDemo demo = new PieChartDemo("JFreeChart: PieChart Demo");
-        demo.pack();
-        RefineryUtilities.centerFrameOnScreen(demo);
-        demo.setVisible(true);
     }
 }
 

@@ -1,5 +1,7 @@
 package client;
 
+import client.frames.ClientFrame;
+
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 

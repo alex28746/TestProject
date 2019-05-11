@@ -1,8 +1,12 @@
 package client;
 
+import client.frames.ClientFrame;
+import client.frames.SummaryFrame;
+import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import toneanalyzer.model.Emotion;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -11,11 +15,12 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.*;
 
-public class MyClient {
+public class ClientSocket {
 
     private static final String CMD_USERNAME = "#cmd_username:";
     private static final String CMD_ONLINE_USERS = "#cmd_online_users:";
     private static final String CMD_USERS_SUMMARY_EMOTION = "#cmd_users_summary_emotion:";
+    private static final String CMD_SEND_AVERAGE_EMOTION_FOR_ALL_USERS = "#cmd_send_average_emotion_for_all_users:";
 
     private static final String COMMA_SEPARATOR = ",";
 
@@ -27,10 +32,10 @@ public class MyClient {
     List<String> UsersStatus = new ArrayList<>();
     List<String> UsersMaxEmotion = new ArrayList<>();
     boolean newMessage = false;
-    String status = "";
-    Boolean isConnected = false;
-    static Map<String, String> OtherUserStatus = new HashMap<String, String>();
-    boolean UserStatusChanged = false;
+    public String status = "";
+    public Boolean isConnected = false;
+    public static Map<String, String> OtherUserStatus = new HashMap<String, String>();
+    public boolean UserStatusChanged = false;
 
     ClientFrame parent;
 
@@ -42,7 +47,7 @@ public class MyClient {
         return out;
     }
 
-    public MyClient(String address, int port, ClientFrame clientFrame) {
+    public ClientSocket(String address, int port, ClientFrame clientFrame) {
         try {
             System.out.println("Connected");
             socket = new Socket(address, port);
@@ -56,13 +61,13 @@ public class MyClient {
             this.parent = clientFrame;
 
         } catch (UnknownHostException u) {
-            System.out.println("MyClient host exception " + u);
+            System.out.println("ClientSocket host exception " + u);
         } catch (IOException i) {
-            System.out.println("MyClient io exception " + i);
+            System.out.println("ClientSocket io exception " + i);
         }
     }
 
-    void ReadMessage() {
+    public void ReadMessage() {
         System.out.println("ReadMessage called.");
         readThread = new Thread(new Runnable() {
             @Override
@@ -97,6 +102,11 @@ public class MyClient {
                             for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
                                 UsersMaxEmotion.add(entry.getKey() + "|[" + entry.getValue() + "]");
                             }
+                        } else if(msg.contains(CMD_SEND_AVERAGE_EMOTION_FOR_ALL_USERS)) {
+                            msg = msg.replaceAll(CMD_SEND_AVERAGE_EMOTION_FOR_ALL_USERS, "");
+                            Gson gson = new Gson();
+                            Map<String, Map<Emotion, Double>> averageEmotionForAllUsers = gson.fromJson(msg, Map.class);
+                            new SummaryFrame(averageEmotionForAllUsers);
                         } else {
                             Messages.add(msg);
                         }
@@ -133,7 +143,7 @@ public class MyClient {
         readThread.start();
     }
 
-    void SendMessage(String message) {
+    public void SendMessage(String message) {
         try {
             // write on the output stream
             out.writeUTF(message);
@@ -144,7 +154,7 @@ public class MyClient {
 
     }
 
-    void closeConnection() {
+    public void closeConnection() {
         try {
             out.close();
             input.close();
