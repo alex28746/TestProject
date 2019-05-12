@@ -39,12 +39,12 @@ public class EmotionSummaryModel {
         List<Integer> emotionsAmount = Arrays.asList(this.analytical, this.anger, this.fear, this.joy, this.sadness, this.tentative);
         Double sum = emotionsAmount.stream().mapToDouble(Integer::intValue).sum();
 
-        result.put(Emotion.ANALYTICAL, sum/this.analytical);
-        result.put(Emotion.ANGER, sum/this.anger);
-        result.put(Emotion.FEAR, sum/this.fear);
-        result.put(Emotion.JOY, sum/this.joy);
-        result.put(Emotion.SADNESS, sum/this.sadness);
-        result.put(Emotion.TENTATIVE, sum/this.tentative);
+        result.put(Emotion.ANALYTICAL, this.analytical/sum);
+        result.put(Emotion.ANGER, this.anger/sum);
+        result.put(Emotion.FEAR, this.fear/sum);
+        result.put(Emotion.JOY, this.joy/sum);
+        result.put(Emotion.SADNESS, this.sadness/sum);
+        result.put(Emotion.TENTATIVE, this.tentative/sum);
         return result;
     }
 

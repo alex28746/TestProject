@@ -21,6 +21,7 @@ public class ClientSocket {
     private static final String CMD_ONLINE_USERS = "#cmd_online_users:";
     private static final String CMD_USERS_SUMMARY_EMOTION = "#cmd_users_summary_emotion:";
     private static final String CMD_SEND_AVERAGE_EMOTION_FOR_ALL_USERS = "#cmd_send_average_emotion_for_all_users:";
+    private static final String CMD_SEND_MESSAGE_FOR_HISTORY = "#cmd_send_message_for_history:";
 
     private static final String COMMA_SEPARATOR = ",";
 
@@ -38,6 +39,8 @@ public class ClientSocket {
     public boolean UserStatusChanged = false;
 
     ClientFrame parent;
+
+    private String chatHistoryForFile = "";
 
     public DataInputStream getInput() {
         return input;
@@ -100,13 +103,16 @@ public class ClientSocket {
 
                             UsersMaxEmotion.clear();
                             for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
-                                UsersMaxEmotion.add(entry.getKey() + "|[" + entry.getValue() + "]");
+                                UsersMaxEmotion.add(entry.getKey() + "[" + entry.getValue() + "]");
                             }
                         } else if(msg.contains(CMD_SEND_AVERAGE_EMOTION_FOR_ALL_USERS)) {
                             msg = msg.replaceAll(CMD_SEND_AVERAGE_EMOTION_FOR_ALL_USERS, "");
                             Gson gson = new Gson();
                             Map<String, Map<Emotion, Double>> averageEmotionForAllUsers = gson.fromJson(msg, Map.class);
                             new SummaryFrame(averageEmotionForAllUsers);
+                        } else if(msg.contains(CMD_SEND_MESSAGE_FOR_HISTORY)) {
+                            msg = msg.replaceAll(CMD_SEND_MESSAGE_FOR_HISTORY, "");
+                            chatHistoryForFile += msg + "\n";
                         } else {
                             Messages.add(msg);
                         }
@@ -117,9 +123,6 @@ public class ClientSocket {
                         for (String message : Messages) {
                             chatHistory += parent.convertMessageToHtml(message);
                         }
-                        for (String status : UsersStatus) {
-                            usersStatus += status;
-                        }
                         for (String emotion : UsersMaxEmotion) {
                             maxEmotionForUsers += parent.convertMessageToHtml(emotion);
                         }
@@ -127,6 +130,7 @@ public class ClientSocket {
                         parent.setChatComponentText(chatHistory);
                         parent.setStatusAreaText(usersStatus);
                         parent.setMaxUsersEmotionPaneText(maxEmotionForUsers);
+                        parent.setUsersStatusArea(UsersStatus);
                         System.out.println("Messages STRING: " + Messages);
                     }
                 } catch (IOException e) {
@@ -141,6 +145,10 @@ public class ClientSocket {
         });
         System.out.println("HashMap in the end of readMessage size " + OtherUserStatus.size());
         readThread.start();
+    }
+
+    public String getChatHistoryForFile() {
+        return chatHistoryForFile;
     }
 
     public void SendMessage(String message) {

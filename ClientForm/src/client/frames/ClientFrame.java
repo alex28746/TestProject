@@ -4,8 +4,14 @@ import client.ClientSocket;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.net.MalformedURLException;
+import java.util.List;
 import java.util.Objects;
 
 import static client.ClientSocket.OtherUserStatus;
@@ -20,6 +26,7 @@ public class ClientFrame extends javax.swing.JFrame {
     private static final String ANGRY_IMG_PATH = "ClientForm/images/angry.jpg";
     private static final String UNKNOWN_JPG_PATH = "ClientForm/images/unknown.jpg";
     private static final String LOADER_GIF_PATH = "ClientForm/images/loader.gif";
+    private static final String GREEN_DOT_PATH = "ClientForm/images/green-dot.jpg";
 
     private static final String CMD_GET_AVERAGE_EMOTION_FOR_ALL_USERS = "#cmd_get_average_emotion_for_all_users";
 
@@ -58,7 +65,7 @@ public class ClientFrame extends javax.swing.JFrame {
         MsgTextArea = new javax.swing.JTextArea();
         UserStatusLabel = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        UsersStatusArea = new javax.swing.JTextArea();
+        UsersStatusArea = new JTextPane();
         StatusLabel = new javax.swing.JLabel();
         StatusComboBox = new javax.swing.JComboBox<>();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -72,6 +79,7 @@ public class ClientFrame extends javax.swing.JFrame {
 
         ChatComponent.setEditable(false);
         MaxUsersEmotionPane.setEditable(false);
+        UsersStatusArea.setEditable(false);
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Praca inz [DEV]");
@@ -95,6 +103,35 @@ public class ClientFrame extends javax.swing.JFrame {
             }
         });
 
+        LeaveBtn.setText("Export");
+        LeaveBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                JFileChooser fileChooser = new JFileChooser();
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
+                fileChooser.setFileFilter(filter);
+
+                if (fileChooser.showSaveDialog(ChatComponent) == JFileChooser.APPROVE_OPTION) {
+                    File file = fileChooser.getSelectedFile();
+
+                    String chatHistoryForFile = client.getChatHistoryForFile();
+
+                    String[] sentenses = chatHistoryForFile.split("\n");
+
+                    try {
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(file + ".txt"));
+
+                        for (String sentence : sentenses) {
+                            writer.write(sentence);
+                            writer.newLine();
+                        }
+                        writer.close();
+                    } catch (Exception e) {
+                        System.out.println("error, " + e);
+                    }
+                }
+            }
+        });
+
         ConnectBtn.setText("Connect");
         ConnectBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -109,9 +146,19 @@ public class ClientFrame extends javax.swing.JFrame {
         SendBtn.setText("Send Message");
         SendBtn.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                SendBtnActionPerformed(evt);
+                SendBtnActionPerformed();
             }
         });
+        MsgTextArea.addKeyListener(new KeyAdapter() {
+                                       public void keyPressed(KeyEvent e) {
+                                           int key = e.getKeyCode();
+                                           if (key == KeyEvent.VK_ENTER) {
+                                               SendBtnActionPerformed();
+                                               MsgTextArea.setText("");
+                                           }
+                                       }
+                                   }
+        );
 
         MsgTextArea.setColumns(20);
         MsgTextArea.setRows(5);
@@ -119,8 +166,7 @@ public class ClientFrame extends javax.swing.JFrame {
 
         UserStatusLabel.setText("Online users:");
 
-        UsersStatusArea.setColumns(20);
-        UsersStatusArea.setRows(5);
+        UsersStatusArea.setContentType("text/html");
         jScrollPane3.setViewportView(UsersStatusArea);
 
         StatusLabel.setText("status");
@@ -201,8 +247,8 @@ public class ClientFrame extends javax.swing.JFrame {
                                                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                                                 .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                                                         .addComponent(JoinBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                                                // .addComponent(LeaveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                        .addComponent(LeaveBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                 .addComponent(jScrollPane4, javax.swing.GroupLayout.Alignment.LEADING)
                                                                 .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.LEADING)))
                                                 .addGap(0, 51, Short.MAX_VALUE))))
@@ -246,17 +292,31 @@ public class ClientFrame extends javax.swing.JFrame {
                                 .addGap(29, 29, 29)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(SendBtn)
-                                        .addComponent(JoinBtn))
-                                // .addComponent(LeaveBtn))
+                                        .addComponent(JoinBtn)
+                                        .addComponent(LeaveBtn))
                                 .addContainerGap(42, Short.MAX_VALUE))
         );
 
         pack();
     }
 
+    public void setUsersStatusArea(List<String> list) {
+        String html = "";
+
+        for (String userName : list) {
+            try {
+                html += "<img src='" + new File(GREEN_DOT_PATH).toURL().toExternalForm() + "' width='7' height='7'>&nbsp;&nbsp;" + userName + "<br>";
+            } catch (Exception e) {
+                html += userName + "<br>";
+                System.err.println("Cannot convert path for green dot, " + e);
+            }
+        }
+        UsersStatusArea.setText(html);
+    }
+
     public String convertMessageToHtml(String message) {
         message = message.replaceAll("\"", "");
-        String emotion = StringUtils.substringBetween(message, "|[", "]");
+        String emotion = StringUtils.substringBetween(message, "[", "]");
 
         if (emotion != null && emotion.length() > 0 && !"null".equals(emotion)) {
             emotion = emotion.replaceAll("\"", "");
@@ -303,7 +363,7 @@ public class ClientFrame extends javax.swing.JFrame {
             } catch (MalformedURLException ex) {
                 System.err.println(ex);
             }
-            String convertedMessage = message.replace("|[" + emotion + "]", "");
+            String convertedMessage = message.replace("[" + emotion + "]", "");
             return "<img src='" + imgsrc + "' width='20' height='20'/>&nbsp;&nbsp;" + convertedMessage + "<br>";
         } else {
             return "<p>" + message + "</p><br/>";
@@ -333,10 +393,9 @@ public class ClientFrame extends javax.swing.JFrame {
         System.out.println("Size of HashMap  after thread 2 is " + ClientSocket.OtherUserStatus.size());
     }
 
-    private void SendBtnActionPerformed(java.awt.event.ActionEvent evt) {
+    private void SendBtnActionPerformed() {
         client.SendMessage(MsgTextArea.getText());
         MsgTextArea.setText("");
-
     }
 
     private void StatusComboBoxActionPerformed(java.awt.event.ActionEvent evt) {
@@ -422,7 +481,7 @@ public class ClientFrame extends javax.swing.JFrame {
     private javax.swing.JLabel UserStatusLabel;
     private javax.swing.JLabel UsernameLabel;
     private javax.swing.JTextField UsernameTextField;
-    private javax.swing.JTextArea UsersStatusArea;
+    private JTextPane UsersStatusArea;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;

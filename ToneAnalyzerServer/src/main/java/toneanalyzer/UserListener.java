@@ -18,6 +18,7 @@ public class UserListener implements Runnable {
     private static final String CMD_USERS_SUMMARY_EMOTION = "#cmd_users_summary_emotion:";
     private static final String CMD_GET_AVERAGE_EMOTION_FOR_ALL_USERS = "#cmd_get_average_emotion_for_all_users";
     private static final String CMD_SEND_AVERAGE_EMOTION_FOR_ALL_USERS = "#cmd_send_average_emotion_for_all_users:";
+    private static final String CMD_SEND_MESSAGE_FOR_HISTORY = "#cmd_send_message_for_history:";
 
     private static final String COMMA_SEPARATOR = ",";
 
@@ -93,6 +94,7 @@ public class UserListener implements Runnable {
                     Map<String, Emotion> maxEmotionForAllUsers = getMaxEmotionForAllUsers(usersSummaryEmotion);
                     for (int i = 0; i < ToneAnalyzerApp.users.size(); i++) {
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(name + " : " + message + preparedEmotionModel);
+                        ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_SEND_MESSAGE_FOR_HISTORY + name + " : " + message + "[" + emotionModel.getDisplayName() + " | accuracy: " + emotionModel.getScore() + "]");
                         ToneAnalyzerApp.users.get(i).outputStream.writeUTF(CMD_USERS_SUMMARY_EMOTION + maxEmotionForAllUsers);
                     }
                 }
@@ -136,6 +138,14 @@ public class UserListener implements Runnable {
             emotionSummaryModel = new EmotionSummaryModel();
         }
 
+        if(emotionModel == null) {
+            emotionModel = new EmotionModel();
+        }
+
+        if(emotionModel.getDisplayName() == null) {
+            emotionModel.setDisplayName("unknown");
+        }
+
         switch (emotionModel.getDisplayName().toLowerCase()) {
             case "analytical": {
                 emotionSummaryModel.incrementAnalytical();
@@ -167,7 +177,7 @@ public class UserListener implements Runnable {
         }
         usersSummaryEmotion.put(this.name, emotionSummaryModel);
 
-        return "|[" + emotionModel.getDisplayName() + "]";
+        return "[" + emotionModel.getDisplayName() + "]";
     }
 
     public void closeConnection() {

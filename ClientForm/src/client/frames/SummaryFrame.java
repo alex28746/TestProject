@@ -59,7 +59,9 @@ public class SummaryFrame extends ApplicationFrame {
         System.out.println(emotions.toString());
         for(Object emotion : emotions.keySet()) {
             try {
-                dataset.setValue(emotion.toString(), emotions.get(emotion));
+                if(emotions.get(emotion) > 0) {
+                    dataset.setValue(emotion.toString(), emotions.get(emotion));
+                }
             } catch(Exception e) {
                 System.out.println("Cannot convert map in SummaryFrame, " + e);
             }
@@ -76,10 +78,8 @@ public class SummaryFrame extends ApplicationFrame {
                 false                // no URL generation
         );
 
-        // Определение фона графического изображения
         chart.setBackgroundPaint(new GradientPaint(new Point(0, 0), new Color(20, 20, 20),
                 new Point(400, 200), Color.DARK_GRAY));
-        // Определение заголовка
         TextTitle t = chart.getTitle();
         t.setHorizontalAlignment(HorizontalAlignment.LEFT);
         t.setPaint(new Color(240, 240, 240));
@@ -90,26 +90,10 @@ public class SummaryFrame extends ApplicationFrame {
         plot.setInteriorGap(0.04);
         plot.setOutlineVisible(false);
 
-        RadialGradientPaint rgpBlue;
-        RadialGradientPaint rgpRed;
-        RadialGradientPaint rgpGreen;
-        RadialGradientPaint rgpYellow;
-
-        rgpBlue = createGradientPaint(colors[0], Color.BLUE);
-        rgpRed = createGradientPaint(colors[1], Color.RED);
-        rgpGreen = createGradientPaint(colors[2], Color.GREEN);
-        rgpYellow = createGradientPaint(colors[3], Color.YELLOW);
-
-        // Определение секций круговой диаграммы
-        plot.setSectionPaint("Оплата жилья", rgpBlue);
-        plot.setSectionPaint("Школа, фитнес", rgpRed);
-        plot.setSectionPaint("Развлечения", rgpGreen);
-        plot.setSectionPaint("Дача, стройка", rgpYellow);
         plot.setBaseSectionOutlinePaint(Color.WHITE);
         plot.setSectionOutlinesVisible(true);
         plot.setBaseSectionOutlineStroke(new BasicStroke(2.0f));
 
-        // Настройка меток названий секций
         plot.setLabelFont(new Font("Courier New", Font.BOLD, 20));
         plot.setLabelLinkPaint(Color.WHITE);
         plot.setLabelLinkStroke(new BasicStroke(2.0f));
@@ -133,7 +117,6 @@ public class SummaryFrame extends ApplicationFrame {
         chart.setPadding(new RectangleInsets(4, 8, 2, 2));
         ChartPanel panel = new ChartPanel(chart);
         panel.setFillZoomRectangle(true);
-        // panel.setMouseWheelEnabled(true);
         panel.setPreferredSize(new Dimension(600, 220));
         return panel;
     }
